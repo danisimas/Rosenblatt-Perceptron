@@ -3,12 +3,18 @@ import numpy as np
 
 class Perceptron:
     def __init__(
-        self, data: np.ndarray, learning_rate: float = 0.1, activation_function=None
+        self,
+        data: np.ndarray,
+        learning_rate: float = 0.1,
+        activation_function=None,
+        bias: float = -1,
     ):
         self.learning_rate = learning_rate
         self.activation_function = (
             activation_function if activation_function else self.step_function
         )
+
+        self.bias = bias
 
         self._data = None
         self.data = data  # This will call the setter and initialize _data and weights
@@ -30,8 +36,11 @@ class Perceptron:
             )
 
         self._data = value
-        # Reinitialize weights based on the input length of the first tuple
-        self.weights = np.zeros(len(value[0][0]))
+        self.init_weights()
+
+    def init_weights(self):
+        # Initialize weights with an additional element for the bias
+        self.weights = np.zeros(len(self._data[0][0]) + 1)
 
     @property
     def input_data(self) -> np.ndarray:
