@@ -3,32 +3,43 @@ import numpy as np
 
 class Perceptron:
     def __init__(
-        self,
-        input_data: np.ndarray,
-        output_value: np.ndarray,
-        learning_rate: float = 0.1,
-        activation_function=None,
+        self, data: np.ndarray, learning_rate: float = 0.1, activation_function=None
     ):
-
-        self._input_data = input_data
-        self.output_value = output_value
-
-        self.weights = np.zeros(input_data.shape[1])
-
         self.learning_rate = learning_rate
-
         self.activation_function = (
             activation_function if activation_function else self.step_function
         )
 
+        self._data = None
+        self.data = data  # This will call the setter and initialize _data and weights
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, value: np.ndarray):
+        if not isinstance(value, np.ndarray):
+            raise ValueError("Data must be a numpy array")
+
+        if value.ndim != 1 or not all(
+            isinstance(i, tuple) and len(i) == 2 for i in value
+        ):
+            raise ValueError(
+                "Data must be a 1-dimensional numpy array of tuples (input, output)"
+            )
+
+        self._data = value
+        # Reinitialize weights based on the input length of the first tuple
+        self.weights = np.zeros(len(value[0][0]))
+
     @property
     def input_data(self) -> np.ndarray:
-        return self._input_data
+        return np.array((item[0] for item in self._data))
 
-    @input_data.setter
-    def input_data(self, value: np.ndarray):
-        self._input_data = value
-        self.weights = np.zeros(value.shape[1])
+    @property
+    def output_data(self) -> np.ndarray:
+        return np.array((item[1] for item in self._data))
 
     def train(self, max_epochs: int = None):
         raise NotImplementedError("The train method is not implemented yet.")
