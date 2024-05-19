@@ -9,16 +9,16 @@ class Perceptron:
         bias: float = -1,
         learning_rate: float = 0.1,
     ):
-        self._input_data = None
-        self._output_data = None
-        self.data = data  # This will call the setter and initialize _input_data and _output_data
+        self.bias = bias
+        self.learning_rate = learning_rate
 
         self.activation_function = (
             activation_function if activation_function else self.step_function
         )
 
-        self.bias = bias
-        self.learning_rate = learning_rate
+        self._input_data = None
+        self._output_data = None
+        self.data = data  # This will call the setter and initialize _input_data and _output_data
 
     @property
     def data(self):
@@ -32,17 +32,16 @@ class Perceptron:
         if not all(len(i) == 2 for i in value):
             raise ValueError("Data must be a numpy array of tuples (input, output)")
 
-        self._input_data = np.array([item[0] for item in value])
+        self._input_data = np.array(
+            [np.insert(item[0], 0, self.bias) for item in value]
+        )
         self._output_data = np.array([item[1] for item in value])
 
-        print("Input: ", self._input_data)
-        print("Output: ", self._output_data)
+        self.__init_weights()
 
-        self.init_weights()
-
-    def init_weights(self):
+    def __init_weights(self):
         # Initialize weights with an additional element for the bias
-        self.weights = np.zeros(len(self._input_data[0]) + 1)
+        self.weights = np.zeros(len(self._input_data[0]))
 
     def randomize_weights(self):
         # Randomize weights with values uniformly distributed between -1 and 1
@@ -57,13 +56,53 @@ class Perceptron:
         return self._output_data
 
     def train(self, max_epochs: int = None):
-        raise NotImplementedError("The train method is not implemented yet.")
+        self.w = 0
+        last_w = 0
+
+        # Train for at maximum "max_epoch" epochs
+        if max_epochs and max_epochs > 0:
+            for _ in range(max_epochs):
+                self._run_single_epoch()
+
+                # No change means no value was incorrectly predicted and no more training is necessary
+                if last_w == self.w:
+                    return self.w
+
+                last_w = self.w
+            return self.w
+
+        # Train until done OR user decides to quit on multiple of 500
+        while True:
+            if self.w > 0 and self.w % 500 == 0:
+                choice = input(f"Trained for {self.w} epochs, continue? (y/n)")
+
+                if choice == "n":
+                    return
+
+            self._run_single_epoch()
+
+            # No change means no value was incorrectly predicted and no more training is necessary
+            if last_w == self.w:
+                return self.w
+
+            last_w = self.w
 
     def predict(self, data: np.ndarray):
         raise NotImplementedError("The predict method is not implemented yet.")
 
-    def run_single_epoch(self):
-        raise NotImplementedError("The run_single_epoch method is not implemented yet.")
+    def _run_single_epoch(self):
+        for input_values, output_value in zip(self._input_data, self._output_data):
+            u = np.dot(input_values, self.weights)
+
+            y = self.activation_function(u)
+
+            if y == output_value:
+                continue
+
+            error = output_value - y
+
+            self.weights = self.weights + self.learning_rate * error * input_values
+            self.w += 1
 
     @staticmethod
     def step_function(x: float) -> int:
@@ -86,3 +125,8 @@ if __name__ == "__main__":
 
     # Check the weights
     print("Randomized weights:", perceptron.weights)
+
+    epochs = perceptron.train()
+
+    print(f"Finished training in {epochs} epochs!")
+    print("Final weights:", perceptron.weights)
