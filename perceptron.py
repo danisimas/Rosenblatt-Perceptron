@@ -62,7 +62,7 @@ class Perceptron:
         # Train for at maximum "max_epoch" epochs
         if max_epochs and max_epochs > 0:
             for _ in range(max_epochs):
-                self._run_single_epoch()
+                self.__run_single_epoch()
 
                 # No change means no value was incorrectly predicted and no more training is necessary
                 if last_w == self.w:
@@ -79,7 +79,7 @@ class Perceptron:
                 if choice == "n":
                     return
 
-            self._run_single_epoch()
+            self.__run_single_epoch()
 
             # No change means no value was incorrectly predicted and no more training is necessary
             if last_w == self.w:
@@ -87,14 +87,14 @@ class Perceptron:
 
             last_w = self.w
 
-    def predict(self, data: np.ndarray):
-        raise NotImplementedError("The predict method is not implemented yet.")
+    def predict(self, values: np.ndarray):
+        u = np.dot(values, self.weights)
+        return self.activation_function(u)
 
-    def _run_single_epoch(self):
+    def __run_single_epoch(self):
         for input_values, output_value in zip(self._input_data, self._output_data):
-            u = np.dot(input_values, self.weights)
 
-            y = self.activation_function(u)
+            y = self.predict(input_values)
 
             if y == output_value:
                 continue
