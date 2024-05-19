@@ -9,6 +9,15 @@ class Perceptron:
         bias: float = -1,
         learning_rate: float = 0.1,
     ):
+        """
+        Initialize the Perceptron.
+
+        Parameters:
+            data (np.ndarray): The input data as a numpy array of tuples (input, output).
+            activation_function (function, optional): The activation function. Defaults to None.
+            bias (float, optional): The bias value. Defaults to -1.
+            learning_rate (float, optional): The learning rate. Defaults to 0.1.
+        """
         self.bias = bias
         self.learning_rate = learning_rate
 
@@ -22,10 +31,22 @@ class Perceptron:
 
     @property
     def data(self):
+        """
+        Get the input and output data as a combined numpy array.
+
+        Returns:
+            np.ndarray: Combined input and output data.
+        """
         return np.hstack((self._input_data, self._output_data))
 
     @data.setter
     def data(self, value: np.ndarray):
+        """
+        Set the input and output data.
+
+        Parameters:
+            value (np.ndarray): The input data as a numpy array of tuples (input, output).
+        """
         if not isinstance(value, np.ndarray):
             raise ValueError("Data must be a numpy array")
 
@@ -40,22 +61,47 @@ class Perceptron:
         self.__init_weights()
 
     def __init_weights(self):
-        # Initialize weights with an additional element for the bias
+        """
+        Initialize the weights array.
+        """
         self.weights = np.zeros(len(self._input_data[0]))
 
     def randomize_weights(self):
-        # Randomize weights with values uniformly distributed between -1 and 1
+        """
+        Randomize the weights array.
+        """
         self.weights = np.random.uniform(-1, 1, len(self.weights))
 
     @property
     def input_data(self) -> np.ndarray:
+        """
+        Get the input data.
+
+        Returns:
+            np.ndarray: Input data.
+        """
         return self._input_data
 
     @property
     def output_data(self) -> np.ndarray:
+        """
+        Get the output data.
+
+        Returns:
+            np.ndarray: Output data.
+        """
         return self._output_data
 
     def train(self, max_epochs: int = None):
+        """
+        Train the Perceptron. Stops on max_epochs or on convergence.
+
+        Parameters:
+            max_epochs (int, optional): Maximum number of epochs. Defaults to None.
+
+        Returns:
+            int: Number of epochs trained.
+        """
         self.w = 0
         last_w = 0
 
@@ -73,13 +119,13 @@ class Perceptron:
 
         # Train until done OR user decides to quit on multiple of 500
         while True:
+            self.__run_single_epoch()
+
             if self.w > 0 and self.w % 500 == 0:
                 choice = input(f"Trained for {self.w} epochs, continue? (y/n)")
 
                 if choice == "n":
-                    return
-
-            self.__run_single_epoch()
+                    return self.w
 
             # No change means no value was incorrectly predicted and no more training is necessary
             if last_w == self.w:
@@ -88,10 +134,22 @@ class Perceptron:
             last_w = self.w
 
     def predict(self, values: np.ndarray):
+        """
+        Predict the output for the given input values.
+
+        Parameters:
+            values (np.ndarray): Input values.
+
+        Returns:
+            Predicted output.
+        """
         u = np.dot(values, self.weights)
         return self.activation_function(u)
 
     def __run_single_epoch(self):
+        """
+        Perform a single epoch of training.
+        """
         for input_values, output_value in zip(self._input_data, self._output_data):
 
             y = self.predict(input_values)
@@ -106,6 +164,15 @@ class Perceptron:
 
     @staticmethod
     def step_function(x: float) -> int:
+        """
+        Step activation function.
+
+        Parameters:
+            x (float): Input value.
+
+        Returns:
+            int: Output value (0 or 1).
+        """
         return 1 if x >= 0 else 0
 
 
