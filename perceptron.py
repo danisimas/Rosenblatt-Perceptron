@@ -100,36 +100,39 @@ class Perceptron:
             max_epochs (int, optional): Maximum number of epochs. Defaults to None.
 
         Returns:
-            int: Number of epochs trained.
+            Tuple: Number of epochs trained and the amount of fits done.
         """
         self.w = 0
         last_w = 0
 
         # Train for at maximum "max_epoch" epochs
         if max_epochs and max_epochs > 0:
-            for _ in range(max_epochs):
+            for epoch in range(max_epochs):
                 self.__run_single_epoch()
 
                 # No change means no value was incorrectly predicted and no more training is necessary
                 if last_w == self.w:
-                    return self.w
+                    return epoch + 1, self.w
 
                 last_w = self.w
-            return self.w
+            return max_epochs, self.w
 
         # Train until done OR user decides to quit on multiple of 500
+
+        epoch = 0
         while True:
             self.__run_single_epoch()
+            epoch += 1
 
-            if self.w > 0 and self.w % 500 == 0:
-                choice = input(f"Trained for {self.w} epochs, continue? (y/n)")
+            if epoch % 500 == 0:
+                choice = input(f"Trained for {epoch} epochs, continue? (y/n)")
 
-                if choice == "n":
-                    return self.w
+                if choice in "nN":
+                    return epoch, self.w
 
             # No change means no value was incorrectly predicted and no more training is necessary
             if last_w == self.w:
-                return self.w
+                return epoch, self.w
 
             last_w = self.w
 
@@ -193,7 +196,7 @@ if __name__ == "__main__":
     # Check the weights
     print("Randomized weights:", perceptron.weights)
 
-    epochs = perceptron.train()
+    fits, epochs = perceptron.train()
 
-    print(f"Finished training in {epochs} epochs!")
+    print(f"Finished training in {epochs} epochs with {fits} fits!")
     print("Final weights:", perceptron.weights)
