@@ -66,11 +66,11 @@ class Perceptron:
         """
         self.weights = np.zeros(len(self._input_data[0]))
 
-    def randomize_weights(self):
+    def randomize_weights(self, floor=-0.5, ceiling=0.5):
         """
-        Randomize the weights array.
+        Set each value of the weight array to a random number between the given interval
         """
-        self.weights = np.random.uniform(-1, 1, len(self.weights))
+        self.weights = np.random.uniform(floor, ceiling, len(self.weights))
 
     @property
     def input_data(self) -> np.ndarray:
