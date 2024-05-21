@@ -100,10 +100,10 @@ class Perceptron:
             max_epochs (int, optional): Maximum number of epochs. Defaults to None.
 
         Returns:
-            Tuple: Number of epochs trained and the amount of fits done.
+            (epoch, weight_updates): Number of epochs trained and the amount of updates applied to the weights array done.
         """
-        self.w = 0
-        last_w = 0
+        self.weight_updates = 0
+        last_weight_update = 0
 
         # Train for at maximum "max_epoch" epochs
         if max_epochs and max_epochs > 0:
@@ -111,11 +111,11 @@ class Perceptron:
                 self.__run_single_epoch()
 
                 # No change means no value was incorrectly predicted and no more training is necessary
-                if last_w == self.w:
-                    return epoch + 1, self.w
+                if last_weight_update == self.weight_updates:
+                    return epoch + 1, self.weight_updates
 
-                last_w = self.w
-            return max_epochs, self.w
+                last_weight_update = self.weight_updates
+            return max_epochs, self.weight_updates
 
         # Train until done OR user decides to quit on multiple of 500
 
@@ -128,13 +128,13 @@ class Perceptron:
                 choice = input(f"Trained for {epoch} epochs, continue? (y/n)")
 
                 if choice in "nN":
-                    return epoch, self.w
+                    return epoch, self.weight_updates
 
             # No change means no value was incorrectly predicted and no more training is necessary
-            if last_w == self.w:
-                return epoch, self.w
+            if last_weight_update == self.weight_updates:
+                return epoch, self.weight_updates
 
-            last_w = self.w
+            last_weight_update = self.weight_updates
 
     def predict(self, values: np.ndarray):
         """
@@ -163,7 +163,7 @@ class Perceptron:
             error = output_value - y
 
             self.weights = self.weights + self.learning_rate * error * input_values
-            self.w += 1
+            self.weight_updates += 1
 
     @staticmethod
     def step_function(x: float) -> int:
