@@ -27,7 +27,7 @@ def identifier(values):
     return str(result)
 
 
-# Exemplo de uso
+# Example Usage
 if __name__ == "__main__":
     matriculas = ["2015310060", "2115080033", "2115080052", "2115080024"]
     result = identifier(matriculas)
