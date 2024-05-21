@@ -14,5 +14,21 @@ def read_data(filename: str):
     return data
 
 
-def identifilier(dict):
-    pass
+def identifier(values):
+    # Pick last digit of each value
+    last_digits = (int(value[-1]) for value in values)
+
+    # Sum the digits
+    soma = sum(last_digits)
+
+    # Calcutate the final result
+    result = soma % 4
+
+    return str(result)
+
+
+# Exemplo de uso
+if __name__ == "__main__":
+    matriculas = ["2015310060", "2115080033", "2115080052", "2115080024"]
+    result = identifier(matriculas)
+    print("Result:", result)
