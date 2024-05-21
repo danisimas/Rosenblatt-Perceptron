@@ -12,3 +12,7 @@ def read_data(filename: str):
     data = np.array([(row[:2], row[2]) for row in data], dtype=object)
 
     return data
+
+
+def identifilier(dict):
+    pass
