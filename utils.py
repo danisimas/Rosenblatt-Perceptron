@@ -3,7 +3,7 @@ import numpy as np
 
 def read_data(filename: str):
     # Read data from file
-    data = np.fromfile(f"./task/data/{filename}.txt")
+    data = np.fromfile(f"./task/data/data{filename}.txt")
 
     # Separate values into (x1 x2 y) elements
     data = data.reshape(-1, 3)
