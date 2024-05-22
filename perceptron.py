@@ -1,4 +1,5 @@
 import numpy as np
+import activation_functions
 
 
 class Perceptron:
@@ -22,7 +23,9 @@ class Perceptron:
         self.learning_rate = learning_rate
 
         self.activation_function = (
-            activation_function if activation_function else self.step_function
+            activation_function
+            if activation_function
+            else activation_functions.step_function
         )
 
         self._input_data = None
@@ -164,19 +167,6 @@ class Perceptron:
 
             self.weights = self.weights + self.learning_rate * error * input_values
             self.weight_updates += 1
-
-    @staticmethod
-    def step_function(x: float) -> int:
-        """
-        Step activation function.
-
-        Parameters:
-            x (float): Input value.
-
-        Returns:
-            int: Output value (0 or 1).
-        """
-        return 1 if x >= 0 else 0
 
 
 # Example usage
