@@ -1,5 +1,7 @@
 import numpy as np
-import activation_functions
+
+from utils import read_data
+from activation_functions import step_function
 
 
 class Perceptron:
@@ -25,7 +27,7 @@ class Perceptron:
         self.activation_function = (
             activation_function
             if activation_function
-            else activation_functions.step_function
+            else activation_function.step_function
         )
 
         self._input_data = None
@@ -175,26 +177,28 @@ class Perceptron:
         self.change_track.append(self.weight_updates - start_w)
 
 
-# Example usage
-if __name__ == "__main__":
+# example of usage
+def perceptron_example():
     # Example data: List of tuples (input, output)
     example_data = [(np.array([2, 2]), 1), (np.array([4, 4]), 0)]
-
     # Convert the list of tuples to a NumPy array
     example_data = np.array(example_data, dtype=object)
 
     # Initialize the Perceptron
     perceptron = Perceptron(data=example_data)
-
-    # Randomize the weights
     perceptron.randomize_weights()
 
     # Check the weights
     print("Randomized weights:", perceptron.weights)
 
+    # training
     fits, epochs = perceptron.train()
 
+    # Looking at the results
     print(f"Finished training in {epochs} epochs with {fits} fits!")
     print("Final weights:", perceptron.weights)
+    print("Adjusts done in each epoch:", perceptron.change_track)
 
-    print("Adjusts done in each epoch:",perceptron.change_track)
+
+if __name__ == "main":
+    perceptron_example()
