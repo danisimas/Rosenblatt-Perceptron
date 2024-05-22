@@ -1,21 +1,15 @@
 import numpy as np
 from prettytable import PrettyTable
 
-from src.activation_functions import step_function
-from src.perceptron import Perceptron
-from src.utils import read_data, identifier
+from activation_functions import step_function
+from perceptron import Perceptron
+from plot import plot_results
+from utils import read_data, identifier
 
 
 def train_with_parameters(data, rates, ranges):
-    perceptron = Perceptron(
-        data=data,
-        activation_function=step_function,
-    )
-
     results = dict()
     for learning_rate in rates:
-        perceptron.learning_rate = learning_rate
-
         for range_bounds in ranges:
             epochs_list = []
             updates_list = []
@@ -47,8 +41,7 @@ def train_with_parameters(data, rates, ranges):
                     min_epochs = epoch
 
                 if train == 9:
-                    # TODO: plot the last solution
-                    pass
+                    plot_results(perceptron.input_data, perceptron.output_data, perceptron.weights)
 
             # Calculate mean and standard deviation
             mean_updates = np.mean(updates_list)
@@ -100,5 +93,5 @@ def task_2():
     print(table)
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     task_2()

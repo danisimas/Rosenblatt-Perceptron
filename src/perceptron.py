@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.activation_functions import step_function
+from activation_functions import step_function
 
 
 class Perceptron:
@@ -173,7 +173,7 @@ class Perceptron:
         self.updates_per_epoch.append(self.weight_updates - start_w)
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     # Example data: List of tuples (input, output)
     example_data = [(np.array([2, 2]), 1), (np.array([4, 4]), 0)]
     # Convert the list of tuples to a NumPy array
