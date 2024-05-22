@@ -31,10 +31,6 @@ class Perceptron:
         self._output_data = None
         self.data = data  # This will call the setter and initialize _input_data and _output_data
 
-        self.change_track = (
-            []
-        )  # Keep the information about the number of adjusts done in each epoch
-
     @property
     def data(self):
         """
@@ -111,6 +107,9 @@ class Perceptron:
         self.weight_updates = 0
         last_weight_update = 0
 
+        # Keep the number of weight updates done in each epoch
+        self.updates_per_epoch = []
+
         # Train for at maximum "max_epoch" epochs
         if max_epochs and max_epochs > 0:
             for epoch in range(max_epochs):
@@ -171,7 +170,7 @@ class Perceptron:
 
             self.weights = self.weights + self.learning_rate * error * input_values
             self.weight_updates += 1
-        self.change_track.append(self.weight_updates - start_w)
+        self.updates_per_epoch.append(self.weight_updates - start_w)
 
 
 if __name__ == "main":
@@ -193,4 +192,4 @@ if __name__ == "main":
     # Looking at the results
     print(f"Finished training in {epochs} epochs with {fits} fits!")
     print("Final weights:", perceptron.weights)
-    print("Adjusts done in each epoch:", perceptron.change_track)
+    print("Adjusts done in each epoch:", perceptron.updates_per_epoch)

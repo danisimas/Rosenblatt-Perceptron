@@ -27,7 +27,7 @@ def task_1():
     print("Treinamento finalizado!")
     print("Quantidade de épocas até a convergência: ", epoch)
     print("Quantidade de ajustes no vetor de pesos: ", updates)
-    print("Quantidade de ajustes em cada época: ", perceptron.change_track)
+    print("Quantidade de ajustes em cada época: ", perceptron.updates_per_epoch)
 
     print("Vetor de pesos final: ", perceptron.weights)
 
