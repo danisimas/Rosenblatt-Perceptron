@@ -1,10 +1,9 @@
-# Part 1 implementation
-from activation_functions import step_function
-from perceptron import Perceptron
-from utils import read_data
+from src.activation_functions import step_function
+from src.perceptron import Perceptron
+from src.utils import read_data
 
 
-if __name__ == "__main__":
+def task_1():
     data = read_data("All")
 
     print("Quantidade de pontos lidos: ", len(data))
@@ -28,6 +27,10 @@ if __name__ == "__main__":
     print("Treinamento finalizado!")
     print("Quantidade de épocas até a convergência: ", epoch)
     print("Quantidade de ajustes no vetor de pesos: ", updates)
-    print("Quantidade de ajustes em cada época: ", perceptron.change_track)
+    print("Quantidade de ajustes em cada época: ", perceptron.updates_per_epoch)
 
     print("Vetor de pesos final: ", perceptron.weights)
+
+
+if __name__ == "__main__":
+    task_1()
