@@ -8,15 +8,8 @@ from utils import read_data, identifier
 
 
 def train_with_parameters(data, rates, ranges):
-    perceptron = Perceptron(
-        data=data,
-        activation_function=step_function,
-    )
-
     results = dict()
     for learning_rate in rates:
-        perceptron.learning_rate = learning_rate
-
         for range_bounds in ranges:
             epochs_list = []
             updates_list = []
