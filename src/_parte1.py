@@ -1,6 +1,6 @@
-from src.activation_functions import step_function
-from src.perceptron import Perceptron
-from src.utils import read_data
+from activation_functions import step_function
+from perceptron import Perceptron
+from utils import read_data
 
 
 def task_1():
