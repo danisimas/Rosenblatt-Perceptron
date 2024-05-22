@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.activation_functions import step_function
+from activation_functions import step_function
 
 
 class Perceptron:
