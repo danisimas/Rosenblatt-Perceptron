@@ -32,6 +32,10 @@ class Perceptron:
         self._output_data = None
         self.data = data  # This will call the setter and initialize _input_data and _output_data
 
+        self.change_track = (
+            []
+        )  # Keep the information about the number of adjusts done in each epoch
+
     @property
     def data(self):
         """
@@ -156,6 +160,7 @@ class Perceptron:
         """
         Perform a single epoch of training.
         """
+        start_w = self.weight_updates
         for input_values, output_value in zip(self._input_data, self._output_data):
 
             y = self.predict(input_values)
@@ -167,6 +172,7 @@ class Perceptron:
 
             self.weights = self.weights + self.learning_rate * error * input_values
             self.weight_updates += 1
+        self.change_track.append(self.weight_updates - start_w)
 
 
 # Example usage
@@ -190,3 +196,5 @@ if __name__ == "__main__":
 
     print(f"Finished training in {epochs} epochs with {fits} fits!")
     print("Final weights:", perceptron.weights)
+
+    print("Adjusts done in each epoch:",perceptron.change_track)
