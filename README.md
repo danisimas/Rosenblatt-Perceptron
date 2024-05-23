@@ -36,6 +36,7 @@ TO-DO: describe repository structure
 - [Daniele Simas](https://github.com/danisimas)
 - [Felipe Amorim](https://github.com/FMABr)
 - [José Manuel](https://github.com/Bloco314)
+- [Miguel Angelo](https://github.com/Miguel-Angelo-wq)
 
 ## Credits
 - Elloá B. Guedes - [github](https://github.com/elloa) and [website](http://www.elloaguedes.com/)
