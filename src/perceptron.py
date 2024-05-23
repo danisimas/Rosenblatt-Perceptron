@@ -1,7 +1,6 @@
 import numpy as np
 
 from activation_functions import step_function
-from utils import train_test_split
 
 
 class Perceptron:
