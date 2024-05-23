@@ -1,6 +1,7 @@
 import numpy as np
 
 from activation_functions import step_function
+from utils import train_test_split
 
 
 class Perceptron:
@@ -29,6 +30,7 @@ class Perceptron:
 
         self._input_data = None
         self._output_data = None
+        self._data = None
         self.data = data  # This will call the setter and initialize _input_data and _output_data
 
     @property
@@ -39,12 +41,13 @@ class Perceptron:
         Returns:
             np.ndarray: Combined input and output data.
         """
-        return np.hstack((self._input_data, self._output_data))
+        return self._data
 
     @data.setter
     def data(self, value: np.ndarray):
         """
-        Set the input and output data.
+        Separate the input and output data into two numpy arrays.
+        Prepends self.bias to input and sets the weight array length based on input data.
 
         Parameters:
             value (np.ndarray): The input data as a numpy array of tuples (input, output).
@@ -54,6 +57,8 @@ class Perceptron:
 
         if not all(len(i) == 2 for i in value):
             raise ValueError("Data must be a numpy array of tuples (input, output)")
+
+        self._data = value
 
         self._input_data = np.array(
             [np.insert(item[0], 0, self.bias) for item in value]
@@ -99,7 +104,7 @@ class Perceptron:
         Train the Perceptron. Stops on max_epochs or on convergence.
 
         Parameters:
-            max_epochs (int, optional): Maximum number of epochs. Defaults to None.
+            max_epochs (int, optional): Maximum number of training epochs. Defaults to None.
 
         Returns:
             (epoch, weight_updates): Number of epochs trained and the amount of updates applied to the weights array done.
@@ -107,7 +112,7 @@ class Perceptron:
         self.weight_updates = 0
         last_weight_update = 0
 
-        # Keep the number of weight updates done in each epoch
+        # Count the number of weight updates done in each epoch
         self.updates_per_epoch = []
 
         # Train for at maximum "max_epoch" epochs
@@ -115,31 +120,67 @@ class Perceptron:
             for epoch in range(max_epochs):
                 self.__run_single_epoch()
 
-                # No change means no value was incorrectly predicted and no more training is necessary
+                # No change means every value was correctly predicted and no more training is necessary
                 if last_weight_update == self.weight_updates:
                     return epoch + 1, self.weight_updates
 
                 last_weight_update = self.weight_updates
             return max_epochs, self.weight_updates
 
-        # Train until done OR user decides to quit on multiple of 500
-
+        # Train until done OR user decides to quit on multiple of 1000
         epoch = 0
         while True:
             self.__run_single_epoch()
             epoch += 1
 
-            if epoch % 500 == 0:
-                choice = input(f"Trained for {epoch} epochs, continue? (y/n)")
+            if epoch % 1000 == 0:
+                choice = input(f"Trained for {epoch} epochs, continue? (y/n) ")
 
                 if choice in "nN":
                     return epoch, self.weight_updates
 
-            # No change means no value was incorrectly predicted and no more training is necessary
+            # No change means every value was correctly predicted and no more training is necessary
             if last_weight_update == self.weight_updates:
                 return epoch, self.weight_updates
 
             last_weight_update = self.weight_updates
+
+    def shuffle_train(self, max_epochs: int):
+        """
+        Train the Perceptron, shuffling the training data every epoch. Stops on max_epochs or on convergence.
+
+        Parameters:
+            max_epochs (int, optional): Maximum number of training epochs. Defaults to None.
+
+        Returns:
+            (epoch, weight_updates): Number of epochs trained and the amount of updates applied to the weights array done.
+        """
+        self.weight_updates = 0
+        last_weight_update = 0
+
+        # Count the number of weight updates done in each epoch
+        self.updates_per_epoch = []
+
+        # Train for at maximum "max_epoch" epochs
+        for epoch in range(max_epochs):
+            # The "data" setter resets the perceptron weights, so we must save them before shuffling
+            current_weights = self.weights
+
+            shuffled_data = self._data.copy()
+            np.random.shuffle(shuffled_data)
+            self.data = shuffled_data
+
+            self.weights = current_weights
+
+            self.__run_single_epoch()
+
+            # No change means every value was correctly predicted and no more training is necessary
+            if last_weight_update == self.weight_updates:
+                return epoch + 1, self.weight_updates
+
+            last_weight_update = self.weight_updates
+
+        return max_epochs, self.weight_updates
 
     def predict(self, values: np.ndarray):
         """
@@ -158,7 +199,8 @@ class Perceptron:
         """
         Perform a single epoch of training.
         """
-        start_w = self.weight_updates
+
+        update_count = 0
         for input_values, output_value in zip(self._input_data, self._output_data):
 
             y = self.predict(input_values)
@@ -169,8 +211,10 @@ class Perceptron:
             error = output_value - y
 
             self.weights = self.weights + self.learning_rate * error * input_values
-            self.weight_updates += 1
-        self.updates_per_epoch.append(self.weight_updates - start_w)
+            update_count += 1
+
+        self.weight_updates += update_count
+        self.updates_per_epoch.append(update_count)
 
 
 if __name__ == "__main__":

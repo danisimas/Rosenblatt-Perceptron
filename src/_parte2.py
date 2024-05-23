@@ -1,58 +1,35 @@
 import numpy as np
 from prettytable import PrettyTable
+import matplotlib.pyplot as plt
 
-from activation_functions import step_function
+import itertools
+
 from perceptron import Perceptron
-from plot import plot_results
-from utils import read_data, identifier
+from utils import read_data, identifier, plot_results
 
 
-def train_with_parameters(data, rates, ranges):
+def train_with_parameters(perceptron: Perceptron, rates, ranges):
     results = dict()
-    for learning_rate in rates:
-        for range_bounds in ranges:
-            epochs_list = []
-            updates_list = []
 
-            min_epochs = float("inf")
-            for train in range(10):
-                # Init the perceptron with the learning_rate
-                perceptron = Perceptron(
-                    data=data,
-                    activation_function=step_function,
-                    bias=-1,
-                    learning_rate=learning_rate,
-                )
+    for range_bounds, learning_rate in itertools.product(ranges, rates):
+        perceptron.learning_rate = learning_rate
 
-                # Draft the weights
-                perceptron.randomize_weights(
-                    floor=-range_bounds, ceiling=range_bounds + 0.1
-                )
+        results[(learning_rate, range_bounds)] = []
 
-                # Train the perceptron
-                epoch, updates = perceptron.train()
+        for _ in range(10):
+            perceptron.randomize_weights(-range_bounds, range_bounds + 0.1)
 
-                # Save epochs and updates
-                epochs_list.append(epoch)
-                updates_list.append(updates)
+            # Train the perceptron
+            epochs, updates = perceptron.train()
 
-                # Track the minimum number of epochs
-                if epoch < min_epochs:
-                    min_epochs = epoch
-
-                if train == 9:
-                    plot_results(perceptron.input_data, perceptron.output_data, perceptron.weights)
-
-            # Calculate mean and standard deviation
-            mean_updates = np.mean(updates_list)
-            std_updates = np.std(updates_list)
-
-            # Save results in the dictionary
-            results[(learning_rate, range_bounds)] = {
-                "mean_updates": mean_updates,
-                "std_updates": std_updates,
-                "min_epochs": min_epochs,
-            }
+            # Save training results
+            results[(learning_rate, range_bounds)].append(
+                {
+                    "epoch_count": epochs,
+                    "update_count": updates,
+                    "final_weights": perceptron.weights,
+                }
+            )
 
     return results
 
@@ -61,35 +38,47 @@ def task_2():
     file_index = identifier(["2015310060", "2115080033", "2115080052", "2115080024"])
     data = read_data(file_index)
 
+    perceptron = Perceptron(data)
     rates = [0.4, 0.1, 0.01]
-    ranges = [100, 0.5]
+    bounds = [100, 0.5]
 
-    results = train_with_parameters(data, rates=rates, ranges=ranges)
+    results = train_with_parameters(perceptron, rates, bounds)
 
-    # Create a PrettyTable object
     table = PrettyTable()
     table.field_names = [
-        "Learning Rate",
-        "Weight Range",
-        "Mean Updates",
-        "Std Updates",
-        "Min Epochs",
+        "Taxa de Aprendizado",
+        "Intervalo de Pesos",
+        "Quantidade de Ajustes",
+        "Menor número de épocas para convergência",
     ]
 
-    # Add rows to the table
-    for key, value in results.items():
-        learning_rate, range_val = key
+    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    for ax, result in zip(axes.flat, results.items()):
+        params, data = result
+        learning_rate, bounds = params
+
+        last_weight = data[-1]["final_weights"]
+
+        mean_updates = np.mean([result["update_count"] for result in data])
+        std_updates = np.std([result["update_count"] for result in data])
+        min_epochs = np.min([result["epoch_count"] for result in data])
+
         table.add_row(
             [
                 learning_rate,
-                f"{-range_val} to {range_val}",
-                value["mean_updates"],
-                value["std_updates"],
-                value["min_epochs"],
+                f"({-bounds:.1f}, {bounds:.1f})",
+                f"{mean_updates:.1f} ± {std_updates:.1f}",
+                min_epochs,
             ]
         )
 
-    # Print the table
+        plot_results(perceptron.input_data, perceptron.output_data, last_weight, ax)
+        ax.set_title(f"{learning_rate} × ({-bounds:.1f}, {bounds:.1f})")
+
+    fig.suptitle("Comparação de resultados: η × I ")
+    plt.tight_layout()
+    plt.show()
+
     print(table)
 
 

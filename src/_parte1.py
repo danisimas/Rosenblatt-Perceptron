@@ -1,6 +1,7 @@
-from activation_functions import step_function
+import matplotlib.pyplot as plt
+
 from perceptron import Perceptron
-from utils import read_data
+from utils import read_data, plot_results
 
 
 def task_1():
@@ -8,14 +9,9 @@ def task_1():
 
     print("Quantidade de pontos lidos: ", len(data))
     print("Formato dos dados: ", data.shape)
-    print("\nExemplos de dados: ", *[(x, y) for x, y in data[:5]], sep="\n")
+    print("\nExemplos de dados: ", *[(x, y) for x, y in data[:5]], sep="\n", end="\n\n")
 
-    perceptron = Perceptron(
-        data=data,
-        activation_function=step_function,
-        bias=-1,
-        learning_rate=0.1,
-    )
+    perceptron = Perceptron(data)
 
     print("Vetor de pesos inicial: ", perceptron.weights)
 
@@ -24,12 +20,15 @@ def task_1():
 
     epoch, updates = perceptron.train()
 
-    print("Treinamento finalizado!")
+    print("\nTreinamento finalizado!")
     print("Quantidade de épocas até a convergência: ", epoch)
     print("Quantidade de ajustes no vetor de pesos: ", updates)
     print("Quantidade de ajustes em cada época: ", perceptron.updates_per_epoch)
 
     print("Vetor de pesos final: ", perceptron.weights)
+
+    plot_results(perceptron.input_data, perceptron.output_data, perceptron.weights)
+    plt.show()
 
 
 if __name__ == "__main__":
