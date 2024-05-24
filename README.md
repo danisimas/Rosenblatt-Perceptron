@@ -6,8 +6,7 @@ Class project with the objective of implementing a training algorithm using Rose
 ## Summary
 - [Installation](#installation)
 - [Repository structure](#repository-structure)
-- [Autores](#authors)
-- [Licença](#licença)
+- [Authors](#authors)
 
 ## Installation
 
@@ -22,15 +21,34 @@ Once the environment has been created, activate it and run the code with:
 
 ```sh
 conda activate my_env_name
-python ./path/to/executable
+
+# Run and see results for part I
+python ./src/_parte1.py
+
+# Run and see results for part II
+python ./src/_parte2.py
+
+# Run and see results for part III
+python ./src/_parte3.py
 ```
 
-TO-DO: add instructions on how to use Jupyter Notebook
+You can also open our [Jupyter](https://docs.jupyter.org/en/latest/start/index.html) Notebook:
 
+```sh
+jupyter notebook ./entrega.ipynb
+```
+
+Read more on https://docs.jupyter.org/en/latest/running.html
 
 ## Repository structure
 
-TO-DO: describe repository structure
+- `/src/` - Directory containing all of python source code developed for this project.
+    - `/src/activation_functions.py` - Python module containing a heaviside step function for use as the default activation function of the Perceptron.
+    - `/src/perceptron.py` - Python module containing a implementation of a Rosenblatt's Perceptron artificial neuron model, written as a Python class.
+    - `/src/_parteN.py` - Each of these files corresponds to a section of the tasks described in the project's PDF file.
+    - `/src/utils.py` - Python module implementing auxiliary functions which are used by each of the tasks.
+- `entrega.ipynb` - Jupyter Notebook showcasing the Perceptron's implementation and experimentation with 3 different problems.
+- `/task/` - Directory containing all training data used in each task and a PDF with the project's full description.
 
 ## Authors
 - [Daniele Simas](https://github.com/danisimas)
